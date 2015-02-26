@@ -31,6 +31,28 @@ var mixins = {
 	}
 };
 
+// https://gist.github.com/svlasov-gists/2383751
+function merge(target, source) {
+    /* Merges two (or more) objects, giving the last one precedence */
+    if ( typeof target !== 'object' ) {
+        target = {};
+    }
+    for (var property in source) {
+        if ( source.hasOwnProperty(property) ) {
+            var sourceProperty = source[ property ];
+            if ( typeof sourceProperty === 'object' ) {
+                target[ property ] = merge( target[ property ], sourceProperty );
+                continue;
+            }
+            target[ property ] = sourceProperty;
+        }
+    }
+    for (var a = 2, l = arguments.length; a < l; a++) {
+        merge(target, arguments[a]);
+    }
+    return target;
+};
+
 var SmartBanner = function(options) {
 	var userAgent = navigator.userAgent;
 	this.options = extend({}, {
@@ -57,11 +79,19 @@ var SmartBanner = function(options) {
 	} else if (UA.match(/Windows Phone 8/i) != null && UA.match(/Touch/i) !== null) {
 		this.type = 'windows';
 	} else if (userAgent.match(/iPad|iPhone|iPod/i) !== null) {
-		if (userAgent.match(/Safari/i) !== null &&
-				(userAgent.match(/CriOS/i) !== null ||
-				Number(userAgent.substr(userAgent.indexOf('OS ') + 3, 3).replace('_', '.')) < 6)) {
+		// Check webview and native smart banner support (Safari + iOS 6+)
+		// If an alternative appMeta has been defined we always display the banner.
+		// If there is no alternative appMeta, we display it only if the visitor is not on Safari or iOS 6+
+		function isBefore6(ua) { return (Number(ua.substr(ua.indexOf('OS ') + 3, 3).replace('_', '.')) < 6); }
+		function isSafari(ua) { return (ua.match(/Safari/i) !== null); }
+		function isChrome(ua) { return (ua.match(/CriOS/i) !== null); }
+		if (this.options.mixins && this.options.mixins.ios && this.options.mixins.ios.appMeta) {
 			this.type = 'ios';
-		} // Check webview and native smart banner support (iOS 6+)
+		} else {
+			if (isChrome(userAgent) || (isSafari(userAgent) && isBefore6(userAgent))) {
+				this.type = 'ios';
+			}
+		}
 	} else if (userAgent.match(/Android/i) !== null) {
 		this.type = 'android';
 	}
@@ -76,6 +106,9 @@ var SmartBanner = function(options) {
 		return;
 	}
 
+	if (this.options.mixins) {
+		merge(mixins, this.options.mixins);
+	}
 	extend(this, mixins[this.type]);
 
 	if (!this.parseAppId()) {
