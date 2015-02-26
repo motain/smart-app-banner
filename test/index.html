@@ -7,7 +7,7 @@
 <title>Smartbanner test</title>
 
 
-<meta name="apple-itunes-app" content="app-id=502838820">
+<meta name="x-apple-itunes-app" content="app-id=502838820">
 <meta name="google-play-app" content="app-id=ru.hh.android">
 
 <meta name="msApplication-ID" content="microsoft.build.App"/>
@@ -44,9 +44,15 @@
 				title: 'KudaGo',
 				author: 'KudaGo Inc',
 				button: 'OPEN',
+				mixins: {
+					ios: {
+						'appMeta': 'x-apple-itunes-app'
+					}
+				},
 				force: force
 		});
 	};
+	run(undefined);
 </script>
 
 <body>
