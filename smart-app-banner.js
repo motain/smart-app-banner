@@ -29,6 +29,7 @@ var SmartBanner = function(options) {
 	this.options = extend({}, {
 		daysHidden: 15,
 		daysReminder: 90,
+		maxViews: 3, // Maximum number of times the banner will be displayed
 		appStoreLanguage: 'us', // Language code for App Store
 		button: 'OPEN', // Text for the install button
 		store: {
@@ -54,11 +55,13 @@ var SmartBanner = function(options) {
 		this.type = 'android';
 	}
 
-	// Don't show banner if device isn't iOS or Android, website is loaded in app, user dismissed banner, or we have no app id in meta
+	// Don't show banner if device isn't iOS, Android or Windows, website is loaded in app, user dismissed banner, 
+	// we reached the maximum number of banner views, or we have no app id in meta
 	if (!this.type
 		|| navigator.standalone
 		|| cookie.get('smartbanner-closed')
-		|| cookie.get('smartbanner-installed')) {
+		|| cookie.get('smartbanner-installed')
+		|| parseInt(cookie.get('smartbanner-viewed')) >= this.options.maxViews) {
 		return;
 	}
 
@@ -118,6 +121,11 @@ SmartBanner.prototype = {
 
 	},
 	hide: function() {
+		var views = parseInt(cookie.get('smartbanner-viewed')) || 0;
+		cookie.set('smartbanner-viewed', views + 1, {
+			path: '/',
+			expires: +new Date() + 1000 * 60 * 60 * 24 * 365 * 10
+		});
 		root.classList.remove('smartbanner-show');
 	},
 	show: function() {
