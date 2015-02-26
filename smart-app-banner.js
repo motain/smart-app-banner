@@ -53,7 +53,7 @@ var SmartBanner = function(options) {
 
 	if (this.options.force) {
 		this.type = this.options.force;
-	} else if (UA.match(/Windows Phone 8/i) != null && UA.match(/Touch/i) !== null) {
+	} else if (userAgent.match(/Windows Phone 8/i) != null && userAgent.match(/Touch/i) !== null) {
 		this.type = 'windows';
 	} else if (userAgent.match(/iPad|iPhone|iPod/i) !== null) {
 		if (userAgent.match(/Safari/i) !== null &&
