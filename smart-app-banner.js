@@ -23,34 +23,34 @@ var mixins = {
 		}
 	},
 	windows: {
-		appMeta: 'msApplication-PackageFamilyName', //'msApplication-ID',
+		appMeta: 'msApplication-ID',
 		iconRels: ['windows-touch-icon', 'apple-touch-icon-precomposed', 'apple-touch-icon'],
 		getStoreLink: function() {
-			return 'ms-windows-store:navigate?appid=' + this.appId; //  + '?lang=' + this.options.appStoreLanguage
+			return 'http://www.windowsphone.com/s?appid=' + this.appId;
 		}
 	}
 };
 
 // https://gist.github.com/svlasov-gists/2383751
 function merge(target, source) {
-    /* Merges two (or more) objects, giving the last one precedence */
-    if ( typeof target !== 'object' ) {
-        target = {};
-    }
-    for (var property in source) {
-        if ( source.hasOwnProperty(property) ) {
-            var sourceProperty = source[ property ];
-            if ( typeof sourceProperty === 'object' ) {
-                target[ property ] = merge( target[ property ], sourceProperty );
-                continue;
-            }
-            target[ property ] = sourceProperty;
-        }
-    }
-    for (var a = 2, l = arguments.length; a < l; a++) {
-        merge(target, arguments[a]);
-    }
-    return target;
+	/* Merges two (or more) objects, giving the last one precedence */
+	if ( typeof target !== 'object' ) {
+		target = {};
+	}
+	for (var property in source) {
+		if ( source.hasOwnProperty(property) ) {
+			var sourceProperty = source[ property ];
+			if ( typeof sourceProperty === 'object' ) {
+				target[ property ] = merge( target[ property ], sourceProperty );
+				continue;
+			}
+			target[ property ] = sourceProperty;
+		}
+	}
+	for (var a = 2, l = arguments.length; a < l; a++) {
+		merge(target, arguments[a]);
+	}
+	return target;
 };
 
 var SmartBanner = function(options) {
@@ -194,11 +194,11 @@ SmartBanner.prototype = {
 		if (!meta) {
 			return;
 		}
-		if (this.type === 'windows') {
-			this.appId = meta.getAttribute('content');
-		} else {
+//		if (this.type === 'windows') {
+//			this.appId = meta.getAttribute('content');
+//		} else {
 			this.appId = /app-id=([^\s,]+)/.exec(meta.getAttribute('content'))[1];
-		}
+//		}
 		return this.appId;
 	}
 };
