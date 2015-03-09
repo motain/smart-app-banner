@@ -247,7 +247,7 @@ var exports = module.exports = function (doc) {
 	self.set = function (key, value, opts) {
 		if (!opts) opts = {};
 		var s = escape(key) + '=' + escape(value);
-		if (opts.expires) s += '; expires=' + opts.expires;
+		if (opts.expires) s += '; expires=' + (new Date(opts.expires)).toUTCString();
 		if (opts.path) s += '; path=' + escape(opts.path);
 		doc.cookie = s;
 		return s;
